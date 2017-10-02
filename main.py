@@ -9,7 +9,8 @@ from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 from Tkinter import *
 from Tkinter import Tk
-import tkMessageBox, tkFileDialog
+import tkMessageBox
+import tkFileDialog
 from tkFileDialog import askopenfilename
 
 #Set default encoding from ASCII to UTF-8. This is hacky and should probably be avoided. 
@@ -31,9 +32,9 @@ def en_fuzzy_match(orig_input):
         fuzz_match_list.append(i[0])
     ratio_values = []
     for i in comp_output:
-        ratio = fuzz.ratio(orig_input,i[0])
+        ratio = fuzz.ratio(orig_input, i[0])
         ratio_values.append(ratio)
-    fuzz_match_ratio = dict(zip(fuzz_match_list,ratio_values))
+    fuzz_match_ratio = dict(zip(fuzz_match_list, ratio_values))
     output = max(fuzz_match_ratio.iteritems(), key=operator.itemgetter(1))[0]
     return output
 
@@ -47,9 +48,9 @@ def jp_fuzzy_match(orig_input):
         fuzz_match_list.append(i[0])
     ratio_values = []
     for i in comp_output:
-        ratio = fuzz.ratio(orig_input,i[0])
+        ratio = fuzz.ratio(orig_input, i[0])
         ratio_values.append(ratio)
-    fuzz_match_ratio = dict(zip(fuzz_match_list,ratio_values))
+    fuzz_match_ratio = dict(zip(fuzz_match_list, ratio_values))
     output = max(fuzz_match_ratio.iteritems(), key=operator.itemgetter(1))[0]
     return output
 
@@ -58,7 +59,8 @@ def jp_fuzzy_match(orig_input):
 #Define function for looking up Japanese term from English input
 def lookup_jp(inp):
     if ".sqlite" not in currentfile:
-        tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 'Open' an existing .sqlite dictionary or 'Create' a new one.")
+        tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 
+				 'Open' an existing .sqlite dictionary or 'Create' a new one.")
     while True:
         t_base = (inp.decode("utf8"),)
         if len(t_base[0]) < 1:
@@ -74,14 +76,14 @@ def lookup_jp(inp):
                 output = en_fuzzy_match(t_base[0])
                 if output is not None:
                     en_input = output
-                    entryWidget_en.delete(0,END)
+                    entryWidget_en.delete(0, END)
                     entryWidget_en.insert(0, en_input)
                 t_base = (output,)
-                c.execute('SELECT ja FROM Glossary WHERE en=?',t_base )
+                c.execute('SELECT ja FROM Glossary WHERE en=?', t_base )
                 ja_output = c.fetchone()
                 if ja_output is not None:
                     ja_input = ja_output[0]
-                    entryWidget_ja.delete(0,END)
+                    entryWidget_ja.delete(0, END)
                     entryWidget_ja.insert(0, ja_input)
                     break
             except:
@@ -91,7 +93,8 @@ def lookup_jp(inp):
 #Define function for looking up English term with Japanese input
 def lookup_en(inp):
     if ".sqlite" not in currentfile:
-        tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 'Open' an existing .sqlite dictionary or 'Create' a new one.")
+        tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 'Open' 
+				    an existing .sqlite dictionary or 'Create' a new one.")
     while True:
         t_base = (inp.decode("utf8"),)
         if len(t_base[0]) < 1:
@@ -100,8 +103,8 @@ def lookup_en(inp):
         output = c.fetchone()
         if output is not None:
             en_input = output[0]
-            entryWidget_en.delete(0,END)
-            entryWidget_en.insert(0, en_input)
+            entryWidget_en.delete(0,END )
+            entryWidget_en.insert(0, en_input )
         else:
             try:
                 output = jp_fuzzy_match(t_base[0])
@@ -114,8 +117,8 @@ def lookup_en(inp):
                 en_output = c.fetchone()
                 if en_output is not None:
                     en_input = en_output[0]
-                    entryWidget_en.delete(0,END)
-                    entryWidget_en.insert(0, en_input)
+                    entryWidget_en.delete(0, END )
+                    entryWidget_en.insert(0, en_input )
                     break
             except:
                 tkMessageBox.showinfo("Not Found","Term not found in City Dictionary.")
