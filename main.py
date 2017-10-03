@@ -18,7 +18,7 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 
-############# DEFINING AUXILIARY FUNCTIONS FOR USE IN USER INTERACTIVE FUNCTIONS #################
+############## DEFINING AUXILIARY FUNCTIONS FOR USE IN USER INTERACTIVE FUNCTIONS #################
 
 
 # Function for fuzzy matching English input
