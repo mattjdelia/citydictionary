@@ -13,7 +13,7 @@ import tkMessageBox
 import tkFileDialog
 from tkFileDialog import askopenfilename
 
-#Set default encoding from ASCII to UTF-8. This is hacky and should probably be avoided. 
+# Set default encoding from ASCII to UTF-8. This is hacky and should probably be avoided. 
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -21,8 +21,8 @@ sys.setdefaultencoding('utf8')
 ############# DEFINING AUXILIARY FUNCTIONS FOR USE IN USER INTERACTIVE FUNCTIONS #################
 
 
-#Function for fuzzy matching English input
-#Implements Levenshtein distance formula via Python fuzzywuzzy library
+# Function for fuzzy matching English input
+# Implements Levenshtein distance formula via Python fuzzywuzzy library
 def en_fuzzy_match(orig_input):
     #t = (language,)
     c.execute('SELECT en FROM Glossary')
@@ -38,8 +38,8 @@ def en_fuzzy_match(orig_input):
     output = max(fuzz_match_ratio.iteritems(), key=operator.itemgetter(1))[0]
     return output
 
-#Function for fuzzy matching Japanese input
-#Implements Levenshtein distance formula via Python fuzzywuzzy library
+# Function for fuzzy matching Japanese input
+# Implements Levenshtein distance formula via Python fuzzywuzzy library
 def jp_fuzzy_match(orig_input):
     c.execute('SELECT ja FROM Glossary')
     comp_output = c.fetchall()
@@ -56,16 +56,15 @@ def jp_fuzzy_match(orig_input):
 
 ############# DEFINING PRIMARY USER INTERACTIVE FUNCTIONS #################
 
-#Define function for looking up Japanese term from English input
+# Define function for looking up Japanese term from English input
 def lookup_jp(inp):
     if ".sqlite" not in currentfile:
-        tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 
-				 'Open' an existing .sqlite dictionary or 'Create' a new one.")
+        tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 'Open' an existing .sqlite dictionary or 'Create' a new one.")
     while True:
         t_base = (inp.decode("utf8"),)
         if len(t_base[0]) < 1:
             break
-        c.execute('SELECT ja FROM Glossary WHERE en=?',t_base )
+        c.execute('SELECT ja FROM Glossary WHERE en=?', t_base)
         output = c.fetchone()
         if output is not None:
             ja_input = output[0]
@@ -79,7 +78,7 @@ def lookup_jp(inp):
                     entryWidget_en.delete(0, END)
                     entryWidget_en.insert(0, en_input)
                 t_base = (output,)
-                c.execute('SELECT ja FROM Glossary WHERE en=?', t_base )
+                c.execute('SELECT ja FROM Glossary WHERE en=?', t_base)
                 ja_output = c.fetchone()
                 if ja_output is not None:
                     ja_input = ja_output[0]
@@ -90,21 +89,20 @@ def lookup_jp(inp):
                 tkMessageBox.showinfo("Not Found","Term not found in City Dictionary.")
                 break
 
-#Define function for looking up English term with Japanese input
+# Define function for looking up English term with Japanese input
 def lookup_en(inp):
     if ".sqlite" not in currentfile:
-        tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 'Open' 
-				    an existing .sqlite dictionary or 'Create' a new one.")
+        tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 'Open' an existing .sqlite dictionary or 'Create' a new one.")
     while True:
         t_base = (inp.decode("utf8"),)
         if len(t_base[0]) < 1:
             break
-        c.execute('SELECT en FROM Glossary WHERE ja=?',t_base )
+        c.execute('SELECT en FROM Glossary WHERE ja=?', t_base)
         output = c.fetchone()
         if output is not None:
             en_input = output[0]
-            entryWidget_en.delete(0,END )
-            entryWidget_en.insert(0, en_input )
+            entryWidget_en.delete(0, END)
+            entryWidget_en.insert(0, en_input)
         else:
             try:
                 output = jp_fuzzy_match(t_base[0])
@@ -124,12 +122,11 @@ def lookup_en(inp):
                 tkMessageBox.showinfo("Not Found","Term not found in City Dictionary.")
                 break
 
-#Define function for adding new English and Japanese terms.
+# Define function for adding new English and Japanese terms.
 def add(ja_input, en_input):
     while True:
         if ".sqlite" not in currentfile:
-            tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 
-				     'Open' an existing .sqlite dictionary or 'Create' a new one.")
+            tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 'Open' an existing .sqlite dictionary or 'Create' a new one.")
             break
         if len(ja_input) < 1 or len(en_input) < 1:
             tkMessageBox.showwarning("Sorry!", "No blank terms allowed.")
@@ -137,12 +134,12 @@ def add(ja_input, en_input):
         jpn = (ja_input.strip(),)
         eng = (en_input.strip(),)
         try:
-            c.execute('''SELECT EXISTS(SELECT ja FROM Glossary WHERE ja=?)''',jpn)
+            c.execute('''SELECT EXISTS(SELECT ja FROM Glossary WHERE ja=?)''', jpn)
         except:
             tkMessageBox.showwarning("File not found","Please open a '.sqlite' file from the file menu.")
             break
         if c.fetchone()[0] == 0:
-            c.execute('''SELECT EXISTS(SELECT en FROM Glossary WHERE en=?)''',eng)
+            c.execute('''SELECT EXISTS(SELECT en FROM Glossary WHERE en=?)''', eng)
             if c.fetchone()[0] == 0:
                 if tkMessageBox.askokcancel("Add term?","Are you sure about adding this term?"):
                     c.execute('''INSERT OR IGNORE INTO Glossary (ja, en)
@@ -158,21 +155,20 @@ def add(ja_input, en_input):
             tkMessageBox.showwarning("Duplicate","Japanese term already in City Dictionary. Select 'update' to alter current terms.")
             break
 
-#Define function for deleting Japanese and English term simultaneously.
+# Define function for deleting Japanese and English term simultaneously.
 def delete(ja_input,en_input):
     while True:
         if ".sqlite" not in currentfile:
-            tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 
-				     'Open' an existing .sqlite dictionary or 'Create' a new one.")
+            tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 'Open' an existing .sqlite dictionary or 'Create' a new one.")
             break
         if len(ja_input) < 1 or len(en_input) < 1:
             tkMessageBox.showwarning("Sorry!", "No blank terms to delete")
             break
         jpn = (ja_input,)
         eng = (en_input,)
-        c.execute('''SELECT EXISTS(SELECT ja FROM Glossary WHERE ja=?)''',jpn)
+        c.execute('''SELECT EXISTS(SELECT ja FROM Glossary WHERE ja=?)''', jpn)
         if c.fetchone()[0] == 1:
-            c.execute('''SELECT EXISTS(SELECT en FROM Glossary WHERE en=?)''',eng)
+            c.execute('''SELECT EXISTS(SELECT en FROM Glossary WHERE en=?)''', eng)
             if c.fetchone()[0] == 1:
                 if tkMessageBox.askokcancel("Delete term?","Are you sure about deleting this term?"):
                     c.execute('''DELETE FROM Glossary WHERE ja=? AND en=?''', ( ja_input, en_input ) )
@@ -188,11 +184,10 @@ def delete(ja_input,en_input):
             break
 
 
-#Define function for viewing all terms.
+# Define function for viewing all terms.
 def view():
     if ".sqlite" not in currentfile:
-        tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 
-				 'Open' an existing .sqlite dictionary or 'Create' a new one.")
+        tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 'Open' an existing .sqlite dictionary or 'Create' a new one.")
     newwindow = Toplevel(master=root)
     img = PhotoImage(file='fukuicity.gif')
     newwindow.tk.call('wm', 'iconphoto', newwindow._w, img)
@@ -212,7 +207,7 @@ def view():
     scrollbar.config(command=t.yview)
     newwindow.mainloop()
 
-#Define function for opening update window.
+# Define function for opening update window.
 def rename_window():
     r_window = Toplevel(master=root)
     img = PhotoImage(file='fukuicity.gif')
@@ -266,12 +261,11 @@ def rename_window():
     r_window.mainloop()
 
 
-#Functions for updating terms
+# Functions for updating terms
 def update_ja(cur_ja,rev_ja):
     while True:
         if ".sqlite" not in currentfile:
-            tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 
-				     'Open' an existing .sqlite dictionary or 'Create' a new one.")
+            tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 'Open' an existing .sqlite dictionary or 'Create' a new one.")
             break
         if len(cur_ja) < 1 or len(rev_ja) < 1:
             tkMessageBox.showwarning("Empty term", "Sorry! No blank terms allowed.")
@@ -297,8 +291,7 @@ def update_ja(cur_ja,rev_ja):
 def update_en(cur_en,rev_en):
     while True:
         if ".sqlite" not in currentfile:
-            tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 
-				     'Open' an existing .sqlite dictionary or 'Create' a new one.")
+            tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 'Open' an existing .sqlite dictionary or 'Create' a new one.")
             break
         if len(cur_en) < 1 or len(rev_en) < 1:
             tkMessageBox.showwarning("Empty term","Sorry! No blank terms allowed.")
@@ -356,37 +349,37 @@ entryWidget_en = Entry(root, textvariable =en_input)
 entryWidget_en["width"] = 40
 entryWidget_en.grid(row=row_offset+1, column= 2, columnspan=5)
 
-#Search JP
+# Search JP
 search_jp = Button(root, text="JP→EN", command=lambda: lookup_en(ja_input.get()))
 search_jp.grid(row=row_offset+3,column= 1, pady=10, sticky=E)
 
-#Search EN
+# Search EN
 search_en = Button(root, text="EN→JP", command=lambda: lookup_jp(en_input.get()))
 search_en.grid(row=row_offset+3,column= 2, sticky=W)
 
-#View Terms
+# View Terms
 view_terms = Button(root, text="View All", command= view)
 view_terms.grid(row=row_offset+3, column = 3)
 
-#Add Term
+# Add Term
 add_term = Button(root, text="Add Term", command= lambda: add(ja_input.get(), en_input.get()))
 add_term.grid(row=row_offset+3, column= 4)
 
-#Update Terms
+# Update Terms
 update_term = Button(root, text="Update", command= rename_window)
 update_term.grid(row=row_offset+3, column= 5)
 
-#Delete Terms
+# Delete Terms
 delete_term = Button(root, text="Delete", command= lambda: delete(ja_input.get(), en_input.get()))
 delete_term.grid(row=row_offset+3, column= 6)
 
-#Create the menu bar
+# Create the menu bar
 menubar = Menu(root)
 
 
 ################################ FILE MENU FUNCTIONS ########################################################
 
-#For opening files. Checks to make sure it's an sqlite file.
+# For opening files. Checks to make sure it's an sqlite file
 def opensql():
     filename = askopenfilename()
     global currentfile
@@ -403,7 +396,7 @@ def opensql():
         conn.text_factory = str
 
 
-#For setting up a new sqlite based dictionary if one is deleted or does not already exist
+# For setting up a new sqlite based dictionary if one is deleted or does not already exist
 def buildsql():
     raw_file = tkFileDialog.asksaveasfile(mode='w', defaultextension=".sqlite")
     if raw_file is None: # asksaveasfile return `None` if dialog closed with "cancel".
@@ -436,6 +429,11 @@ def importcsv():
         print content[0].decode("Shift-JIS")
 
     csvfile.close()
+				     
+				     
+# Below is an attempt to design a function that imports the contents of a .csv
+# file into the opened sqlite dictionary file. This implementation throws back
+# an error when encountering an empty cell. 
 
 """
     with open('test.csv', 'rb') as csvfile:
@@ -464,7 +462,7 @@ def importcsv():
         #cursor.commit()
 
 
-#Defining function that opens a new window to display main GUI commands
+# Defining function that opens a new window to display main GUI commands
 def command_list():
 	newwindow = Toplevel(master=root)
 	img = PhotoImage(file='fukuicity.gif')
@@ -502,12 +500,12 @@ filemenu.add_separator()
 filemenu.add_command(label="Exit", command=root.quit)
 menubar.add_cascade(label="File", menu=filemenu)
 
-#Set up the import menu
+# Set up the import menu
 importmenu = Menu(menubar, tearoff=0)
 importmenu.add_command(label="Import Terms", command=importcsv)
 menubar.add_cascade(label="Import", menu=importmenu)
 
-#Set up the help menu
+# Set up the help menu
 helpmenu = Menu(menubar, tearoff=0)
 helpmenu.add_command(label="List of Commands", command=command_list)
 helpmenu.add_command(label="Getting Started", command=getting_started)
@@ -516,7 +514,7 @@ menubar.add_cascade(label="Help", menu=helpmenu)
 # Add the entire menu bar
 root.config(menu=menubar)
 
-#Check to see if a specific .sqlite file and directory have been previously opened
+# Check to see if a specific .sqlite file and directory have been previously opened
 try:
     global currentfile
     currentfile = open('cddirectory.xml','r').read().decode("Shift-JIS")
