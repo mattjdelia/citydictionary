@@ -59,7 +59,8 @@ def jp_fuzzy_match(orig_input):
 # Define function for looking up Japanese term from English input
 def lookup_jp(inp):
     if ".sqlite" not in currentfile:
-        tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 'Open' an existing .sqlite dictionary or 'Create' a new one.")
+        tkMessageBox.showwarning("File Not Found (.sqlite)", 
+				 "Please select 'File' and 'Open' an existing .sqlite dictionary or 'Create' a new one.")
     while True:
         t_base = (inp.decode("utf8"),)
         if len(t_base[0]) < 1:
@@ -92,7 +93,8 @@ def lookup_jp(inp):
 # Define function for looking up English term with Japanese input
 def lookup_en(inp):
     if ".sqlite" not in currentfile:
-        tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 'Open' an existing .sqlite dictionary or 'Create' a new one.")
+        tkMessageBox.showwarning("File Not Found (.sqlite)", 
+				 "Please select 'File' and 'Open' an existing .sqlite dictionary or 'Create' a new one.")
     while True:
         t_base = (inp.decode("utf8"),)
         if len(t_base[0]) < 1:
@@ -126,7 +128,8 @@ def lookup_en(inp):
 def add(ja_input, en_input):
     while True:
         if ".sqlite" not in currentfile:
-            tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 'Open' an existing .sqlite dictionary or 'Create' a new one.")
+            tkMessageBox.showwarning("File Not Found (.sqlite)", 
+				     "Please select 'File' and 'Open' an existing .sqlite dictionary or 'Create' a new one.")
             break
         if len(ja_input) < 1 or len(en_input) < 1:
             tkMessageBox.showwarning("Sorry!", "No blank terms allowed.")
@@ -149,17 +152,20 @@ def add(ja_input, en_input):
                 else:
                     break
             else:
-                tkMessageBox.showwarning("Duplicate","English term already in City Dictionary. Select 'update' to alter current terms.")
+                tkMessageBox.showwarning("Duplicate",
+					 "English term already in City Dictionary. Select 'update' to alter current terms.")
                 break
         else:
-            tkMessageBox.showwarning("Duplicate","Japanese term already in City Dictionary. Select 'update' to alter current terms.")
+            tkMessageBox.showwarning("Duplicate",
+				     "Japanese term already in City Dictionary. Select 'update' to alter current terms.")
             break
 
 # Define function for deleting Japanese and English term simultaneously.
 def delete(ja_input,en_input):
     while True:
         if ".sqlite" not in currentfile:
-            tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 'Open' an existing .sqlite dictionary or 'Create' a new one.")
+            tkMessageBox.showwarning("File Not Found (.sqlite)", 
+				     "Please select 'File' and 'Open' an existing .sqlite dictionary or 'Create' a new one.")
             break
         if len(ja_input) < 1 or len(en_input) < 1:
             tkMessageBox.showwarning("Sorry!", "No blank terms to delete")
@@ -187,7 +193,8 @@ def delete(ja_input,en_input):
 # Define function for viewing all terms.
 def view():
     if ".sqlite" not in currentfile:
-        tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 'Open' an existing .sqlite dictionary or 'Create' a new one.")
+        tkMessageBox.showwarning("File Not Found (.sqlite)", 
+				 "Please select 'File' and 'Open' an existing .sqlite dictionary or 'Create' a new one.")
     newwindow = Toplevel(master=root)
     img = PhotoImage(file='fukuicity.gif')
     newwindow.tk.call('wm', 'iconphoto', newwindow._w, img)
@@ -265,7 +272,8 @@ def rename_window():
 def update_ja(cur_ja,rev_ja):
     while True:
         if ".sqlite" not in currentfile:
-            tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 'Open' an existing .sqlite dictionary or 'Create' a new one.")
+            tkMessageBox.showwarning("File Not Found (.sqlite)", 
+				     "Please select 'File' and 'Open' an existing .sqlite dictionary or 'Create' a new one.")
             break
         if len(cur_ja) < 1 or len(rev_ja) < 1:
             tkMessageBox.showwarning("Empty term", "Sorry! No blank terms allowed.")
@@ -273,7 +281,8 @@ def update_ja(cur_ja,rev_ja):
         curja = (cur_ja,)
         c.execute('''SELECT EXISTS(SELECT ja FROM Glossary WHERE ja=?)''',curja)
         if c.fetchone()[0] == 0:
-            tkMessageBox.showwarning("Not Found","Current term not found in dictionary. Please select 'Add Term' to add new terms.")
+            tkMessageBox.showwarning("Not Found",
+				     "Current term not found in dictionary. Please select 'Add Term' to add new terms.")
             break
         revja = (rev_ja,)
         c.execute('''SELECT EXISTS(SELECT ja FROM Glossary WHERE ja=?)''',revja)
@@ -291,7 +300,8 @@ def update_ja(cur_ja,rev_ja):
 def update_en(cur_en,rev_en):
     while True:
         if ".sqlite" not in currentfile:
-            tkMessageBox.showwarning("File Not Found (.sqlite)", "Please select 'File' and 'Open' an existing .sqlite dictionary or 'Create' a new one.")
+            tkMessageBox.showwarning("File Not Found (.sqlite)", 
+				     "Please select 'File' and 'Open' an existing .sqlite dictionary or 'Create' a new one.")
             break
         if len(cur_en) < 1 or len(rev_en) < 1:
             tkMessageBox.showwarning("Empty term","Sorry! No blank terms allowed.")
@@ -299,7 +309,8 @@ def update_en(cur_en,rev_en):
         curen = (cur_en,)
         c.execute('''SELECT EXISTS(SELECT en FROM Glossary WHERE en=?)''',curen)
         if c.fetchone()[0] == 0:
-            tkMessageBox.showwarning("Not Found","Current term not found in dictionary. Please select 'Add Term' to add new terms.")
+            tkMessageBox.showwarning("Not Found",
+				     "Current term not found in dictionary. Please select 'Add Term' to add new terms.")
             break
         reven = (rev_en,)
         c.execute('''SELECT EXISTS(SELECT en FROM Glossary WHERE en=?)''',reven)
