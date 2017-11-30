@@ -26,7 +26,6 @@ sys.setdefaultencoding('utf8')
 # Function for fuzzy matching English input
 # Implements Levenshtein distance formula via Python fuzzywuzzy library
 def en_fuzzy_match(orig_input):
-    #t = (language,)
     c.execute('SELECT en FROM Glossary')
     comp_output = c.fetchall()
     fuzz_match_list = []
@@ -71,7 +70,7 @@ def lookup_jp(inp):
         output = c.fetchone()
         if output is not None:
             ja_input = output[0]
-            entryWidget_ja.delete(0,END)
+            entryWidget_ja.delete(0, END)
             entryWidget_ja.insert(0, ja_input)
         else:
             try:
@@ -112,10 +111,10 @@ def lookup_en(inp):
                 output = jp_fuzzy_match(t_base[0])
                 if output is not None:
                     ja_input = output
-                    entryWidget_ja.delete(0,END)
+                    entryWidget_ja.delete(0, END)
                     entryWidget_ja.insert(0, ja_input)
                 t_base = (output,)
-                c.execute('SELECT en FROM Glossary WHERE ja=?',t_base )
+                c.execute('SELECT en FROM Glossary WHERE ja=?', t_base )
                 en_output = c.fetchone()
                 if en_output is not None:
                     en_input = en_output[0]
@@ -179,7 +178,7 @@ def delete(ja_input,en_input):
             c.execute('''SELECT EXISTS(SELECT en FROM Glossary WHERE en=?)''', eng)
             if c.fetchone()[0] == 1:
                 if tkMessageBox.askokcancel("Delete term?","Are you sure about deleting this term?"):
-                    c.execute('''DELETE FROM Glossary WHERE ja=? AND en=?''', ( ja_input, en_input ) )
+                    c.execute('''DELETE FROM Glossary WHERE ja=? AND en=?''', (ja_input, en_input))
                     conn.commit()
                     break
                 else:
@@ -281,18 +280,18 @@ def update_ja(cur_ja,rev_ja):
             tkMessageBox.showwarning("Empty term", "Sorry! No blank terms allowed.")
             break
         curja = (cur_ja,)
-        c.execute('''SELECT EXISTS(SELECT ja FROM Glossary WHERE ja=?)''',curja)
+        c.execute('''SELECT EXISTS(SELECT ja FROM Glossary WHERE ja=?)''', curja)
         if c.fetchone()[0] == 0:
             tkMessageBox.showwarning("Not Found",
 				     "Current term not found in dictionary. Please select 'Add Term' to add new terms.")
             break
         revja = (rev_ja,)
-        c.execute('''SELECT EXISTS(SELECT ja FROM Glossary WHERE ja=?)''',revja)
+        c.execute('''SELECT EXISTS(SELECT ja FROM Glossary WHERE ja=?)''', revja)
         if c.fetchone()[0] != 0:
             tkMessageBox.showwarning("Duplicate","Revised term already in City Dictionary")
             break
         if tkMessageBox.askokcancel("Revise term?","Are you sure about revising this Japanese term?"):
-            c.execute('''UPDATE Glossary SET ja=? WHERE ja=? ''', (rev_ja,cur_ja))
+            c.execute('''UPDATE Glossary SET ja=? WHERE ja=? ''', (rev_ja, cur_ja))
             conn.commit()
             break
         else:
@@ -309,19 +308,19 @@ def update_en(cur_en,rev_en):
             tkMessageBox.showwarning("Empty term","Sorry! No blank terms allowed.")
             break
         curen = (cur_en,)
-        c.execute('''SELECT EXISTS(SELECT en FROM Glossary WHERE en=?)''',curen)
+        c.execute('''SELECT EXISTS(SELECT en FROM Glossary WHERE en=?)''', curen)
         if c.fetchone()[0] == 0:
             tkMessageBox.showwarning("Not Found",
 				     "Current term not found in dictionary. Please select 'Add Term' to add new terms.")
             break
         reven = (rev_en,)
-        c.execute('''SELECT EXISTS(SELECT en FROM Glossary WHERE en=?)''',reven)
+        c.execute('''SELECT EXISTS(SELECT en FROM Glossary WHERE en=?)''', reven)
         if c.fetchone()[0] != 0:
             tkMessageBox.showwarning("Duplicate","Revised term already in City Dictionary")
             break
         if tkMessageBox.askokcancel("Revise term?","Are you sure about revising this English term?"):
             try:
-                c.execute('''UPDATE Glossary SET en =? WHERE en =?''',( rev_en,cur_en ))
+                c.execute('''UPDATE Glossary SET en =? WHERE en =?''',(rev_en, cur_en))
                 conn.commit()
                 break
             except:
@@ -348,23 +347,23 @@ en_input = StringVar()
 
 entryLabel = Label(root)
 entryLabel["text"] = "Japanese term:"
-entryLabel.grid(row=row_offset,sticky=E,padx=5,column= 1)
+entryLabel.grid(row=row_offset,sticky=E,padx=5,column=1)
 
-entryWidget_ja = Entry(root, textvariable =ja_input)
+entryWidget_ja = Entry(root, textvariable=ja_input)
 entryWidget_ja["width"] = 40
-entryWidget_ja.grid(row=row_offset, column= 2, columnspan=5 )
+entryWidget_ja.grid(row=row_offset, column=2, columnspan=5)
 
 entryLabel = Label(root)
 entryLabel["text"] = "English term:"
-entryLabel.grid(row=row_offset+1,sticky=E,padx=5,column=  1)
+entryLabel.grid(row=row_offset+1,sticky=E,padx=5,column=1)
 
 entryWidget_en = Entry(root, textvariable =en_input)
 entryWidget_en["width"] = 40
-entryWidget_en.grid(row=row_offset+1, column= 2, columnspan=5)
+entryWidget_en.grid(row=row_offset+1, column=2, columnspan=5)
 
 # Search JP
 search_jp = Button(root, text="JP→EN", command=lambda: lookup_en(ja_input.get()))
-search_jp.grid(row=row_offset+3,column= 1, pady=10, sticky=E)
+search_jp.grid(row=row_offset+3,column=1, pady=10, sticky=E)
 
 # Search EN
 search_en = Button(root, text="EN→JP", command=lambda: lookup_jp(en_input.get()))
@@ -372,7 +371,7 @@ search_en.grid(row=row_offset+3,column= 2, sticky=W)
 
 # View Terms
 view_terms = Button(root, text="View All", command= view)
-view_terms.grid(row=row_offset+3, column = 3)
+view_terms.grid(row=row_offset+3, column=3)
 
 # Add Term
 add_term = Button(root, text="Add Term", command= lambda: add(ja_input.get(), en_input.get()))
